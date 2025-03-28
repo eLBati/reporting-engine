@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id='view_pdfgen_report_placeholder_form' model='ir.ui.view' >
-            <field name="name">pdfgen.report.placeholder.form</field>
-            <field name="model">pdfgen.report.placeholder</field>
+            <field name="name">pdfgen.fixed.report.placeholder.form</field>
+            <field name="model">pdfgen.fixed.report.placeholder</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>

@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id='view_pdfgen_report_form' model='ir.ui.view' >
-            <field name="name">pdfgen.report.form</field>
-            <field name="model">pdfgen.report</field>
+            <field name="name">pdfgen.fixed.report.form</field>
+            <field name="model">pdfgen.fixed.report</field>
             <field name="arch" type="xml">
                 <form >
                     <sheet>
@@ -39,8 +39,7 @@
                             <field name="code" />
                             <field name="file_name" invisible="1" />
                             <field name="template_pdf" filename="file_name"/>
-                            <field name="model_id" attrs="{'invisible': [('template_pdf', '=', False)]}"/>
-                            <field name="placeholder_ids" attrs="{'invisible': ['|', ('template_pdf', '=', False), ('model_id', '=', False)]}">
+                            <field name="placeholder_ids" attrs="{'invisible': [('template_pdf', '=', False)]}">
                                 <tree>
                                     <field name="id" />
                                     <field name="page" />
@@ -54,19 +53,6 @@
                         
                     </sheet>
                 </form>
-            </field>
-        </record>
-
-        <record id="view_pdfgen_report_tree" model="ir.ui.view" >
-            <field name="name">pdfgen.report.tree</field>
-            <field name="model">pdfgen.report</field>
-            
-            <field name="arch" type="xml">                
-                <tree default_order="id desc">
-                    <field name="name" />
-                    <field name="model_id" />
-                    <field name="id"/>
-                </tree>                
             </field>
         </record>
 

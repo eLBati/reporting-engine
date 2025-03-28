@@ -2,13 +2,13 @@
 <odoo>
     <record id="pdfgen_report_action" model="ir.actions.act_window">
         <field name="name">Report Generator</field>
-        <field name="res_model">pdfgen.report</field>
+        <field name="res_model">pdfgen.fixed.report</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[]</field>
     </record>
     <record id="pdfgen_report_font_action" model="ir.actions.act_window">
         <field name="name">Report Font</field>
-        <field name="res_model">pdfgen.report.placeholder.font</field>
+        <field name="res_model">pdfgen.fixed.report.placeholder.font</field>
         <field name="view_mode">tree</field>
         <field name="domain">[]</field>
     </record>

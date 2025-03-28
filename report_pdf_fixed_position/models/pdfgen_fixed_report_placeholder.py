@@ -7,7 +7,7 @@ TEXT_ALIGNMENT_LIST = [
 ]
 
 class PDFGenReportPlaceholder(models.Model):
-    _name = "pdfgen.report.placeholder"
+    _name = "pdfgen.fixed.report.placeholder"
     _description = "PDF Generator Placeholder"
 
     name = fields.Char(
@@ -16,7 +16,7 @@ class PDFGenReportPlaceholder(models.Model):
     )
 
     report_id = fields.Many2one(
-        comodel_name="pdfgen.report",
+        comodel_name="pdfgen.fixed.report",
         string="Related report"
     )
 
@@ -36,7 +36,7 @@ class PDFGenReportPlaceholder(models.Model):
     )
 
     text_font_id = fields.Many2one(
-        comodel_name="pdfgen.report.placeholder.font",
+        comodel_name="pdfgen.fixed.report.placeholder.font",
         string="Font",
         required=True
     )

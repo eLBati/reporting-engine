@@ -9,7 +9,7 @@ def post_init_hook(cr, registry):
 
     for font in fonts:
         try:
-            env['pdfgen.report.placeholder.font'].sudo().create({"name": font, "default_font": True})
+            env['pdfgen.fixed.report.placeholder.font'].sudo().create({"name": font, "default_font": True})
         except:
             pass
     

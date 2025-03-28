@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id='view_pdfgen_report_placeholder_font_tree' model='ir.ui.view' >
-            <field name="name">pdfgen.report.placeholder.font.tree</field>
-            <field name="model">pdfgen.report.placeholder.font</field>
+            <field name="name">pdfgen.fixed.report.placeholder.font.tree</field>
+            <field name="model">pdfgen.fixed.report.placeholder.font</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="name" />

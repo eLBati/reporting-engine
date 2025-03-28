@@ -25,9 +25,9 @@ TEXT_COLOR_LIST = [
     [0.380, 0.231, 0.498],
 ]
 
-class PDFGenReport(models.Model):
-    _name = "pdfgen.report"
-    _description = "Report Generator"
+class PDFGenReportTemplate(models.Model):
+    _name = "pdfgen.fixed.report.template"
+    _description = "Report Generator Template"
 
     name = fields.Char(
         string="Name",
@@ -49,29 +49,26 @@ class PDFGenReport(models.Model):
         required=False
     )
 
-    model_id = fields.Many2one(
-        comodel_name="ir.model",
-        string="Model",
-        required=False
-    )
-
     placeholder_ids = fields.One2many(
-        comodel_name="pdfgen.report.placeholder",
+        comodel_name="pdfgen.fixed.report.placeholder",
         inverse_name="report_id",
         string="Fields",
         required=True
     )
 
-    ir_action_server_count = fields.Integer(
-        string="Action server count",
-        compute="_compute_ir_action_server_count"
+
+class PDFGenReport(models.Model):
+    _name = "pdfgen.fixed.report"
+    _description = "Fixed Report"
+
+    ir_actions_report_id = fields.Many2one(
+        comodel_name="ir.actions.report", required=True
     )
 
     @api.model
     def create(self, values):
         res = super(PDFGenReport, self).create(values)
         res._validate_template_extension(values.get('file_name'))
-        res._validate_name_and_identificative()
 
         return res
 
@@ -80,7 +77,6 @@ class PDFGenReport(models.Model):
 
         for record in self:
             record._validate_template_extension(record.file_name)
-            record._validate_name_and_identificative()
 
         return res
 
@@ -88,58 +84,22 @@ class PDFGenReport(models.Model):
         if filename and filename.split('.')[-1].lower() != 'pdf':
             raise ValidationError(_("Only PDF extensions allowed"))
 
-    def _validate_name_and_identificative(self):
-        if self.env['pdfgen.report'].search([('name', '=', self.name), ('id', '!=', self.id)]):
-            raise ValidationError(_("A report with this name already exists, report's name need to be unique."))
-        if self.env['pdfgen.report'].search([('code', '=', self.code), ('id', '!=', self.id)]):
-            raise ValidationError(_("A report with this identificator already exists, report's identificator need to be unique."))
-
-    def copy(self, default={}):
-        default.update({
-            "name": "%s (Copy)" % (self.name),
-            "code": "%s_copy" % (self.code)
-        })
-
-        return super(PDFGenReport, self).copy(default)
-
-    @api.model
-    def return_output(self, files, wizard_name):
-        output = []
-        for file in files:
-            output.append((0, 0, {
-                    'filename': file['name'],
-                    'file': file['content'],
-                    'download_btn': self.env['pdfgen.output.file'].download_action(file['name'], file['content'])
-                }))
-
-        return {
-            'name': wizard_name,
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'pdfgen.output.wizard',
-            'target': 'new',
-            'context': {
-                'default_output_file_ids': output,
-                'default_wizard_name': wizard_name
-            },
-            'flags': {'initial_mode': 'view'}
-        }
-
     @api.model
     def get_report(self, code):
-        return self.env['pdfgen.report'].search([('code', '=', code)], limit=1)
+        return self.env['pdfgen.fixed.report'].search([('code', '=', code)], limit=1)
 
-    def generate_report(self, res_id):
+    def generate_report(self, res_id, data=None):
         try:
-            template = io.BytesIO(base64.b64decode(self.template_pdf))
+            template = io.BytesIO(base64.b64decode(
+                self.ir_actions_report_id.pdfgen_fixed_report_template_id.template_pdf
+            ))
             existing_pdf = PyPDF2.PdfFileReader(template)
             pdf_writer = PyPDF2.PdfFileWriter()
         except:
             raise ValidationError(_('Could not load provided template, maybe is broken'))
 
         try:
-            record = self.env[self.model_id.model].browse(res_id)
+            record = self.env[self.ir_actions_report_id.model].browse(res_id)
         except:
             raise ValidationError(_("Could not generate report, record not found: %d" % (res_id)))
 
@@ -148,7 +108,7 @@ class PDFGenReport(models.Model):
                 packet = io.BytesIO()
                 can = canvas.Canvas(packet, pagesize=letter)
 
-                placeholders = self.env['pdfgen.report.placeholder'].search([('id','in',self.placeholder_ids.ids), ('page','=',page+1)])
+                placeholders = self.env['pdfgen.fixed.report.placeholder'].search([('id','in',self.ir_actions_report_id.pdfgen_fixed_report_template_id.placeholder_ids.ids), ('page','=',page+1)])
 
                 for placeholder in placeholders:
 
@@ -186,14 +146,9 @@ class PDFGenReport(models.Model):
             output = io.BytesIO()
             pdf_writer.write(output)
             output.seek(0)
-
-            return {
-                'content': base64.b64encode(output.read()).decode(),
-                'name': '%s %i.pdf' % (self.model_id.name,res_id)
-            }
+            return base64.b64encode(output.read()).decode(), "pdf"
         except Exception as ex:
             _logger.info("Failed elaborating resource %d >> %s" % (res_id, ex))
-
             raise ValidationError("An error has occurred: %s" % (str(ex)))
 
     def preview_report(self):
@@ -217,7 +172,7 @@ class PDFGenReport(models.Model):
             'view_mode': 'tree,form',
             'res_model': 'ir.actions.server',
             'target': 'current',
-            'domain': [('pdfgen_report_id', '=', self.id)],
+            'domain': [('pdfgen_fixed_report_id', '=', self.id)],
             'context': self._default_action_server_values()
         }
 
@@ -231,27 +186,6 @@ class PDFGenReport(models.Model):
             'context': self._default_action_server_values()
         }
 
-    def _default_action_server_values(self):
-        default_code = """
-pdfgen = env['pdfgen.report'].sudo()
-report = pdfgen.get_report('%s')
-reports = []
-
-for record in records:
-    reports.append(report.generate_report(record.id))
-
-action = pdfgen.return_output(reports, 'Documents')
-
-""" % (self.code)
-
-        return {
-            'default_pdfgen_report_id': self.id,
-            'default_model_id': self.model_id.id,
-            'default_state': 'code',
-            'default_name': _('%s Action' % (self.name)),
-            'default_code': default_code
-        }
-
     def _compute_ir_action_server_count(self):
         for record in self:
-            record.ir_action_server_count = self.env['ir.actions.server'].sudo().search([('pdfgen_report_id', '=', record.id)], count=True)
+            record.ir_action_server_count = self.env['ir.actions.server'].sudo().search([('pdfgen_fixed_report_id', '=', record.id)], count=True)

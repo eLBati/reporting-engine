@@ -19,5 +19,5 @@ class PDFGenPreviewWizard(models.TransientModel):
     @api.onchange('res_id')
     def _onchange_res_id(self):
         if self.res_id > 0:
-            report_id = self.env['pdfgen.report'].browse(self.env.context.get("default_report_id"))
+            report_id = self.env['pdfgen.fixed.report'].browse(self.env.context.get("default_report_id"))
             self.file = report_id.generate_report(self.res_id)['content']

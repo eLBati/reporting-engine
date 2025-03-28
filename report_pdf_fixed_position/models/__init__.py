@@ -1,1 +1,2 @@
-from . import report, report_placeholder, report_placeholder_font, ir_actions_server
+from . import pdfgen_fixed_report, pdfgen_fixed_report_placeholder, pdfgen_fixed_report_placeholder_font
+from . import ir_actions_report

@@ -29,9 +29,7 @@
         'views/report_views.xml',
         'views/report_placeholder_views.xml',
         'views/report_placeholder_font_views.xml',
-        'views/ir_actions_server_views.xml',
 
-        'wizards/views/output_wizard_views.xml',
         'wizards/views/preview_wizard_views.xml',
     ],
     'post_init_hook': 'post_init_hook'

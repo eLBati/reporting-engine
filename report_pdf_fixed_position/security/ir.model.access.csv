@@ -1,14 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-perm_pdfgen_report_user,pdfgen.report,model_pdfgen_report,base.group_user,1,0,0,0
-perm_pdfgen_report_manager,pdfgen.report,model_pdfgen_report,group_pdfgen_manager,1,1,1,1
+perm_pdfgen_report_user,pdfgen.report,model_pdfgen_fixed_report,base.group_user,1,0,0,0
+perm_pdfgen_report_manager,pdfgen.report,model_pdfgen_fixed_report,group_pdfgen_manager,1,1,1,1
 
-perm_pdfgen_placeholder_user,pdfgen.report.placeholder,model_pdfgen_report_placeholder,base.group_user,1,0,0,0
-perm_pdfgen_placeholder_manager,pdfgen.report.placeholder,model_pdfgen_report_placeholder,group_pdfgen_manager,1,1,1,1
+perm_pdfgen_placeholder_user,pdfgen.report.placeholder,model_pdfgen_fixed_report_placeholder,base.group_user,1,0,0,0
+perm_pdfgen_placeholder_manager,pdfgen.report.placeholder,model_pdfgen_fixed_report_placeholder,group_pdfgen_manager,1,1,1,1
 
-perm_pdfgen_output_wizard,pdfgen.output.wizard,model_pdfgen_output_wizard,base.group_user,1,1,1,1
 perm_pdfgen_preview_wizard,pdfgen.preview.wizard,model_pdfgen_preview_wizard,base.group_user,1,1,1,1
 
-perm_pdfgen_output_file,pdfgen.output.file,model_pdfgen_output_file,base.group_user,1,1,1,1
 
-perm_pdfgen_placeholder_font,pdfgen.report.placeholder.font,model_pdfgen_report_placeholder_font,base.group_user,1,0,0,0
-perm_pdfgen_placeholder_font,pdfgen.report.placeholder.font,model_pdfgen_report_placeholder_font,group_pdfgen_manager,1,1,1,1
+perm_pdfgen_placeholder_font,pdfgen.report.placeholder.font,model_pdfgen_fixed_report_placeholder_font,base.group_user,1,0,0,0
+perm_pdfgen_placeholder_font,pdfgen.report.placeholder.font,model_pdfgen_fixed_report_placeholder_font,group_pdfgen_manager,1,1,1,1

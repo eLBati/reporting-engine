@@ -10,7 +10,7 @@ import base64
 _logger = getLogger(__name__)
 
 class PDFGenReportPlaceholderFont(models.Model):
-    _name = "pdfgen.report.placeholder.font"
+    _name = "pdfgen.fixed.report.placeholder.font"
     _description = "PDF Generator Placeholder font"
     
     name = fields.Char(
